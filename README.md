@@ -1,2 +1,250 @@
-# mini-project
-This is for School purposes where we assigned to make miniproject.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Guess the Number</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #334155;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        h1 {
+            color: #1e293b;
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        
+        .guess-input {
+            width: 100px;
+            padding: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            margin-top: 1rem;
+            box-sizing: border-box; 
+        }
+        
+        
+        .guess-input::-webkit-outer-spin-button,
+        .guess-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .guess-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .guess-btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #3b82f6; /* Blue */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 1rem;
+            margin-left: 0.5rem;
+        }
+
+        .guess-btn:hover {
+            background-color: #2563eb;
+        }
+
+        /* Message Area */
+        .message-area {
+            height: 3rem; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        #message {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        
+        .text-high { color: #ef4444; } 
+        .text-low { color: #f97316; }  
+        .text-correct { color: #10b981; } 
+
+        
+        .guess-count {
+            font-size: 1rem;
+            color: #64748b;
+        }
+
+       
+        #play-again-btn {
+            display: none; 
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #10b981; 
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        #play-again-btn:hover {
+            background-color: #059669;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Guess the Number</h1>
+        <p>I'm thinking of a number between 1 and 100. Can you guess it?</p>
+
+        <!-- Input area -->
+        <div id="game-input-area">
+            <input type="number" id="guess-input" class="guess-input" min="1" max="100">
+            <button id="submit-btn" class="guess-btn">Submit</button>
+        </div>
+
+        <!-- Message and Count -->
+        <div class="message-area">
+            <p id="message"></p>
+        </div>
+        <p class="guess-count">Guesses: <span id="guess-count">0</span></p>
+
+        <!-- Play Again Button -->
+        <button id="play-again-btn">Play Again</button>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT (The Brains) ---
+
+        
+        const guessInput = document.getElementById('guess-input');
+        const submitButton = document.getElementById('submit-btn');
+        const message = document.getElementById('message');
+        const guessCountDisplay = document.getElementById('guess-count');
+        const playAgainButton = document.getElementById('play-again-btn');
+        const gameInputArea = document.getElementById('game-input-area');
+
+        
+        let secretNumber;
+        let guessCount;
+
+        
+        function initializeGame() {
+            
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            guessCount = 0;
+
+            
+            guessCountDisplay.textContent = guessCount;
+            message.textContent = "Good luck!";
+            message.className = ''; 
+            guessInput.value = '';
+            
+            
+            gameInputArea.style.display = 'block';
+            playAgainButton.style.display = 'none';
+            guessInput.focus();
+        }
+
+        
+        function checkGuess() {
+            const userGuess = parseInt(guessInput.value);
+
+            
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+                message.textContent = "Please enter a number from 1 to 100.";
+                message.className = 'text-high'; 
+                return; 
+            }
+
+            
+            guessCount++;
+            guessCountDisplay.textContent = guessCount;
+
+            
+            message.className = '';
+
+            if (userGuess === secretNumber) {
+                
+                message.textContent = `You got it in ${guessCount} guesses!`;
+                message.classList.add('text-correct');
+                
+                
+                gameInputArea.style.display = 'none';
+                playAgainButton.style.display = 'block';
+
+            } else if (userGuess > secretNumber) {
+                
+                message.textContent = "Too high! Try again.";
+                message.classList.add('text-high');
+            } else {
+                
+                message.textContent = "Too low! Try again.";
+                message.classList.add('text-low');
+            }
+
+            
+            guessInput.value = '';
+            guessInput.focus(); 
+        }
+
+        
+        submitButton.addEventListener('click', checkGuess);
+        playAgainButton.addEventListener('click', initializeGame);
+
+        
+        guessInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                checkGuess();
+            }
+        });
+
+        
+        initializeGame();
+
+    </script>
+
+</body>
+</html>
